@@ -1,5 +1,4 @@
-/*
-  SmartDS
+/*31/05/2019
   Copyright (c) 2014-2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
