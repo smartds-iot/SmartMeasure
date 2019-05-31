@@ -105,8 +105,8 @@
 
 
 #include "variant.h"
+ //victor me **** en tu ****
 
-// SAMD21G SMART BIOSYSTEM
 const PinDescription g_APinDescription[]=
 { // ----------------------------------- Arduino compatible pins -----------------------------------
   /*-------- CONECTORES SENSORES---------*/
