@@ -29,19 +29,20 @@
 //   - SPISetting(clock, bitOrder, dataMode)
 #define SPI_HAS_TRANSACTION 1
 
+// SPI_HAS_NOTUSINGINTERRUPT means that SPI has notUsingInterrupt() method
+#define SPI_HAS_NOTUSINGINTERRUPT 1
+
 #define SPI_MODE0 0x02
 #define SPI_MODE1 0x00
 #define SPI_MODE2 0x03
 #define SPI_MODE3 0x01
 
-#if defined(__SAMD21G18A__) || defined(__SAMD21J18A__)
-  // Even if not specified on the datasheet, the SAMD21G18A MCU
-  // doesn't operate correctly with clock dividers lower than 4.
-  // This allows a theoretical maximum SPI clock speed of 12Mhz
-  #define SPI_MIN_CLOCK_DIVIDER 4
-  // Other SAMD21xxxxx MCU may be affected as well
-#else
-  #define SPI_MIN_CLOCK_DIVIDER 2
+#if defined(ARDUINO_ARCH_SAMD)
+  // The datasheet specifies a typical SPI SCK period (tSCK) of 42 ns,
+  // see "Table 36-48. SPI Timing Characteristics and Requirements",
+  // which translates into a maximum SPI clock of 23.8 MHz.
+  // Conservatively, the divider is set for a 12 MHz maximum SPI clock.
+  #define SPI_MIN_CLOCK_DIVIDER (uint8_t)(1 + ((F_CPU - 1) / 12000000))
 #endif
 
 class SPISettings {
@@ -91,13 +92,16 @@ class SPISettings {
 
 class SPIClass {
   public:
-  SPIClass(SERCOM *p_sercom, uint8_t uc_pinMISO, uint8_t uc_pinSCK, uint8_t uc_pinMOSI);
+  SPIClass(SERCOM *p_sercom, uint8_t uc_pinMISO, uint8_t uc_pinSCK, uint8_t uc_pinMOSI, SercomSpiTXPad, SercomRXPad);
+
 
   byte transfer(uint8_t data);
-  inline void transfer(void *buf, size_t count);
+  uint16_t transfer16(uint16_t data);
+  void transfer(void *buf, size_t count);
 
   // Transaction Functions
   void usingInterrupt(int interruptNumber);
+  void notUsingInterrupt(int interruptNumber);
   void beginTransaction(SPISettings settings);
   void endTransaction(void);
 
@@ -120,22 +124,33 @@ class SPIClass {
   uint8_t _uc_pinMiso;
   uint8_t _uc_pinMosi;
   uint8_t _uc_pinSCK;
+
+  SercomSpiTXPad _padTx;
+  SercomRXPad _padRx;
+
   bool initialized;
   uint8_t interruptMode;
   char interruptSave;
   uint32_t interruptMask;
 };
 
-void SPIClass::transfer(void *buf, size_t count)
-{
-  // TODO: Optimize for faster block-transfer
-  uint8_t *buffer = reinterpret_cast<uint8_t *>(buf);
-  for (size_t i=0; i<count; i++)
-    buffer[i] = transfer(buffer[i]);
-}
-
 #if SPI_INTERFACES_COUNT > 0
   extern SPIClass SPI;
+#endif
+#if SPI_INTERFACES_COUNT > 1
+  extern SPIClass SPI1;
+#endif
+#if SPI_INTERFACES_COUNT > 2
+  extern SPIClass SPI2;
+#endif
+#if SPI_INTERFACES_COUNT > 3
+  extern SPIClass SPI3;
+#endif
+#if SPI_INTERFACES_COUNT > 4
+  extern SPIClass SPI4;
+#endif
+#if SPI_INTERFACES_COUNT > 5
+  extern SPIClass SPI5;
 #endif
 
 // For compatibility with sketches designed for AVR @ 16 MHz

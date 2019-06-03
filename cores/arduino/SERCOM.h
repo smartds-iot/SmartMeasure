@@ -21,7 +21,8 @@
 
 #include "sam.h"
 
-#define SERCOM_FREQ_REF 48000000
+#define SERCOM_FREQ_REF      48000000
+#define SERCOM_NVIC_PRIORITY ((1<<__NVIC_PRIO_BITS) - 1)
 
 typedef enum
 {
@@ -86,9 +87,11 @@ typedef enum
 
 typedef enum
 {
-	SAMPLE_RATE_x16 = 0,	//Arithmetic
-	SAMPLE_RATE_x8 = 0x2,	//Arithmetic
-	SAMPLE_RATE_x3 = 0x3	//Arithmetic
+	SAMPLE_RATE_ARITH_x16 = 0x0,	// Arithmetic
+	SAMPLE_RATE_FRACT_x16 = 0x1,	// Fractional
+	SAMPLE_RATE_ARITH_x8 = 0x2,	// Arithmetic
+	SAMPLE_RATE_FRACT_x8 = 0x3,	// Fractional
+	SAMPLE_RATE_ARITH_x3 = 0x4,	// Arithmetic
 } SercomUartSampleRate;
 
 typedef enum
@@ -162,6 +165,10 @@ class SERCOM
 		bool isDataRegisterEmptyUART( void ) ;
 		uint8_t readDataUART( void ) ;
 		int writeDataUART(uint8_t data) ;
+		bool isUARTError() ;
+		void acknowledgeUARTError() ;
+		void enableDataRegisterEmptyInterruptUART();
+		void disableDataRegisterEmptyInterruptUART();
 
 		/* ========== SPI ========== */
 		void initSPI(SercomSpiTXPad mosi, SercomRXPad miso, SercomSpiCharSize charSize, SercomDataOrder dataOrder) ;
@@ -171,17 +178,17 @@ class SERCOM
 		void enableSPI( void ) ;
 		void disableSPI( void ) ;
 		void setDataOrderSPI(SercomDataOrder dataOrder) ;
+		SercomDataOrder getDataOrderSPI( void ) ;
 		void setBaudrateSPI(uint8_t divider) ;
 		void setClockModeSPI(SercomSpiClockMode clockMode) ;
-		void writeDataSPI(uint8_t data) ;
-		uint16_t readDataSPI( void ) ;
+		uint8_t transferDataSPI(uint8_t data) ;
 		bool isBufferOverflowErrorSPI( void ) ;
 		bool isDataRegisterEmptySPI( void ) ;
 		bool isTransmitCompleteSPI( void ) ;
 		bool isReceiveCompleteSPI( void ) ;
 
 		/* ========== WIRE ========== */
-		void initSlaveWIRE(uint8_t address) ;
+		void initSlaveWIRE(uint8_t address, bool enableGeneralCall = false) ;
 		void initMasterWIRE(uint32_t baudrate) ;
 
 		void resetWIRE( void ) ;
@@ -189,13 +196,14 @@ class SERCOM
     void disableWIRE( void );
     void prepareNackBitWIRE( void ) ;
     void prepareAckBitWIRE( void ) ;
-    void prepareCommandBitsWire(SercomMasterCommandWire cmd);
+    void prepareCommandBitsWire(uint8_t cmd);
 		bool startTransmissionWIRE(uint8_t address, SercomWireReadWriteFlag flag) ;
 		bool sendDataMasterWIRE(uint8_t data) ;
 		bool sendDataSlaveWIRE(uint8_t data) ;
 		bool isMasterWIRE( void ) ;
 		bool isSlaveWIRE( void ) ;
 		bool isBusIdleWIRE( void ) ;
+		bool isBusOwnerWIRE( void ) ;
 		bool isDataReadyWIRE( void ) ;
 		bool isStopDetectedWIRE( void ) ;
 		bool isRestartDetectedWIRE( void ) ;

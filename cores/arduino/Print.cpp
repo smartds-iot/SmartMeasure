@@ -31,7 +31,8 @@ size_t Print::write(const uint8_t *buffer, size_t size)
 {
   size_t n = 0;
   while (size--) {
-    n += write(*buffer++);
+    if (write(*buffer++)) n++;
+    else break;
   }
   return n;
 }
@@ -112,9 +113,7 @@ size_t Print::print(const Printable& x)
 
 size_t Print::println(void)
 {
-  size_t n = print('\r');
-  n += print('\n');
-  return n;
+  return write("\r\n");
 }
 
 size_t Print::println(const String &s)
@@ -189,7 +188,8 @@ size_t Print::println(const Printable& x)
 
 // Private Methods /////////////////////////////////////////////////////////////
 
-size_t Print::printNumber(unsigned long n, uint8_t base) {
+size_t Print::printNumber(unsigned long n, uint8_t base)
+{
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
 
@@ -199,9 +199,9 @@ size_t Print::printNumber(unsigned long n, uint8_t base) {
   if (base < 2) base = 10;
 
   do {
-    unsigned long m = n;
+    char c = n % base;
     n /= base;
-    char c = m - base * n;
+
     *--str = c < 10 ? c + '0' : c + 'A' - 10;
   } while(n);
 
@@ -238,14 +238,14 @@ size_t Print::printFloat(double number, uint8_t digits)
 
   // Print the decimal point, but only if there are digits beyond
   if (digits > 0) {
-    n += print(".");
+    n += print('.');
   }
 
   // Extract digits from the remainder one at a time
   while (digits-- > 0)
   {
     remainder *= 10.0;
-    int toPrint = int(remainder);
+    unsigned int toPrint = (unsigned int)(remainder);
     n += print(toPrint);
     remainder -= toPrint;
   }

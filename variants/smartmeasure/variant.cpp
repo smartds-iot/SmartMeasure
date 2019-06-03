@@ -111,28 +111,28 @@ const PinDescription g_APinDescription[]=
 { // ----------------------------------- Arduino compatible pins -----------------------------------
   /*-------- CONECTORES SENSORES---------*/
   //CON1
-   { PORTB, 04, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel12, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A0_CON1 OK
-   { PORTA, 03, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel1, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A1_CON1 OK
-   { PORTB, 05, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel13, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A2_CON1 OK
-   { PORTA, 02, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel0, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A3_CON1 OK
+   { PORTB, 4, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel12, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A0_CON1 OK
+   { PORTA, 3, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel1, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A1_CON1 OK
+   { PORTB, 5, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel13, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A2_CON1 OK
+   { PORTA, 2, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel0, NOT_ON_PWM,   NOT_ON_TIMER,  EXTERNAL_INT_NONE    }, //A3_CON1 OK
    { PORTB, 30, PIO_DIGITAL, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM,   NOT_ON_TIMER,EXTERNAL_INT_NONE     }, //D0_CON1 OK
    { PORTB, 31, PIO_DIGITAL, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM,   NOT_ON_TIMER,EXTERNAL_INT_NONE      }, //D1_CON1  OK
 
   //CON2
   //6
-   { PORTB, 06, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel14, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A0_CON2 OK
-   { PORTB, 07, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel15, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A1_CON2 OK
-   { PORTB, 08, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel2, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A2_CON2 OK
-   { PORTB, 09, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel3, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A3_CON2 OK
-   { PORTB, 01, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM7_CH1,   TC7_CH1,      EXTERNAL_INT_1        }, //D0_CON2 OK
-   { PORTB, 03, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM6_CH1,   TC6_CH1,      EXTERNAL_INT_3        }, //D1_CON2 OK
+   { PORTB, 6, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel14, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A0_CON2 OK
+   { PORTB, 7, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel15, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A1_CON2 OK
+   { PORTB, 8, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel2, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A2_CON2 OK
+   { PORTB, 9, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel3, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A3_CON2 OK
+   { PORTB, 1, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM7_CH1,   TC7_CH1,      EXTERNAL_INT_1        }, //D0_CON2 OK
+   { PORTB, 3, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM6_CH1,   TC6_CH1,      EXTERNAL_INT_3        }, //D1_CON2 OK
    
 	//CON3
   //12
-   { PORTA, 04, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel4, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A0_CON3 OK
-   { PORTA, 05, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel5, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A1_CON3 OK
-   { PORTA, 06, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel6, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A2_CON3 OK
-   { PORTA, 07, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel7, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A3_CON3 OK
+   { PORTA, 4, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel4, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A0_CON3 OK
+   { PORTA, 5, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel5, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE    }, //A1_CON3 OK
+   { PORTA, 6, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel6, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A2_CON3 OK
+   { PORTA, 7, PIO_ANALOG, (PIN_ATTR_DIGITAL                               ), ADC_Channel7, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE     }, //A3_CON3 OK
    { PORTB, 13, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM4_CH1,   TC4_CH1,      EXTERNAL_INT_13        }, //D0_CON3 OK
    { PORTB, 12, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM4_CH0,   TC4_CH0,      EXTERNAL_INT_12        }, //D1_CON3 OK
    
@@ -140,13 +140,13 @@ const PinDescription g_APinDescription[]=
    //18
    { PORTB, 11, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER  ), No_ADC_Channel, PWM5_CH1,   TC5_CH1,      EXTERNAL_INT_11        }, //INFO_BATERIA OK
    { PORTA, 27, PIO_DIGITAL, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_15        }, //FREE_FALL_PIN OK
-   { PORTB, 00, PIO_ANALOG,  (PIN_ATTR_DIGITAL                              ), ADC_Channel8, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE      }, //BAT_LEVEL OK
-   { PORTB, 02, PIO_DIGITAL, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER,EXTERNAL_INT_NONE       }, //ISET2_USB OK
+   { PORTB, 0, PIO_ANALOG,  (PIN_ATTR_DIGITAL                              ), ADC_Channel8, NOT_ON_PWM,   NOT_ON_TIMER, EXTERNAL_INT_NONE      }, //BAT_LEVEL OK
+   { PORTB, 2, PIO_DIGITAL, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER,EXTERNAL_INT_NONE       }, //ISET2_USB OK
 
     //UART MULTIPLEXOR
     //SERCOM2
     //22
-    { PORTA, 08, PIO_DIGITAL, (PIN_ATTR_DIGITAL                             ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER,EXTERNAL_INT_NONE       }, //MUX_UART_A OK
+    { PORTA, 8, PIO_DIGITAL, (PIN_ATTR_DIGITAL                             ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER,EXTERNAL_INT_NONE       }, //MUX_UART_A OK
     { PORTA, 11, PIO_DIGITAL, (PIN_ATTR_DIGITAL                             ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER,EXTERNAL_INT_NONE       }, //MUX_UART_B OK
     { PORTA, 12, PIO_SERCOM, (PIN_ATTR_NONE                                 ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE      }, // TX:   SERCOM2/PAD[0] OK
     { PORTA, 13, PIO_SERCOM, (PIN_ATTR_NONE                                 ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE      }, // RX:   SERCOM2/PAD[1] OK
@@ -183,7 +183,7 @@ const PinDescription g_APinDescription[]=
     { PORTA, 21, PIO_DIGITAL, (PIN_ATTR_NONE                                   ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // EN_I2C OK
     { PORTA, 22, PIO_SERCOM,  (PIN_ATTR_DIGITAL                                ), No_ADC_Channel,  NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_6 },  // SDA:  SERCOM3/PAD[0] OK
     { PORTA, 23, PIO_SERCOM,  (PIN_ATTR_DIGITAL                                ), No_ADC_Channel,  NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_7 }, // SCL:  SERCOM3/PAD[1] OK
-    { PORTA, 09, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER    ), No_ADC_Channel, PWM0_CH1,   TCC0_CH1,      EXTERNAL_INT_9 }, //TIMEPULSE OK
+    { PORTA, 9, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER    ), No_ADC_Channel, PWM0_CH1,   TCC0_CH1,      EXTERNAL_INT_9 }, //TIMEPULSE OK
 
     //USB
     //44

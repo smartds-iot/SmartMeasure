@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2015 M2M4ALL BV.  All right reserved.
+# Copyright (c) 2015-2016 M2M4ALL BV.  All right reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+# SmartMeasure
+# ---------------------------------------
 smartmeasure.name=SmartMeasure
 smartmeasure.vid.0=0x2341
 smartmeasure.pid.0=0x804d
@@ -38,3 +40,5 @@ smartmeasure.build.variant=smartmeasure
 smartmeasure.build.variant_system_lib=
 smartmeasure.build.vid=0x2341
 smartmeasure.build.pid=0x804d
+smartmeasure.bootloader.tool=openocd
+smartmeasure.bootloader.file=autonomo/samd21_sam_ba_autonomo.bin

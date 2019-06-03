@@ -25,6 +25,10 @@ e-mail   :  support@circuitsathome.com
 
 #define UHS_HID_BOOT_KEY_ZERO           0x27
 #define UHS_HID_BOOT_KEY_ENTER          0x28
+#define UHS_HID_BOOT_KEY_ESCAPE         0x29
+#define UHS_HID_BOOT_KEY_DELETE         0x2a    // Backspace
+#define UHS_HID_BOOT_KEY_DELETE_FORWARD	0x4C	// Delete
+#define UHS_HID_BOOT_KEY_TAB            0x2b
 #define UHS_HID_BOOT_KEY_SPACE          0x2c
 #define UHS_HID_BOOT_KEY_CAPS_LOCK      0x39
 #define UHS_HID_BOOT_KEY_SCROLL_LOCK    0x47
@@ -64,25 +68,25 @@ public:
 
 protected:
 
-        virtual void OnMouseMove(MOUSEINFO *mi) {
+        virtual void OnMouseMove(MOUSEINFO *) {
         };
 
-        virtual void OnLeftButtonUp(MOUSEINFO *mi) {
+        virtual void OnLeftButtonUp(MOUSEINFO *) {
         };
 
-        virtual void OnLeftButtonDown(MOUSEINFO *mi) {
+        virtual void OnLeftButtonDown(MOUSEINFO *) {
         };
 
-        virtual void OnRightButtonUp(MOUSEINFO *mi) {
+        virtual void OnRightButtonUp(MOUSEINFO *) {
         };
 
-        virtual void OnRightButtonDown(MOUSEINFO *mi) {
+        virtual void OnRightButtonDown(MOUSEINFO *) {
         };
 
-        virtual void OnMiddleButtonUp(MOUSEINFO *mi) {
+        virtual void OnMiddleButtonUp(MOUSEINFO *) {
         };
 
-        virtual void OnMiddleButtonDown(MOUSEINFO *mi) {
+        virtual void OnMiddleButtonDown(MOUSEINFO *) {
         };
 };
 
@@ -153,13 +157,13 @@ public:
 protected:
 	virtual uint8_t HandleLockingKeys(HID* hid, uint8_t key);
 
-        virtual void OnControlKeysChanged(uint8_t before, uint8_t after) {
+        virtual void OnControlKeysChanged(uint8_t /* before */, uint8_t /* after */) {
         };
 
-        virtual void OnKeyDown(uint8_t mod, uint8_t key) {
+        virtual void OnKeyDown(uint8_t /* mod */, uint8_t /* key */) {
         };
 
-        virtual void OnKeyUp(uint8_t mod, uint8_t key) {
+        virtual void OnKeyUp(uint8_t /* mod */, uint8_t /* key */) {
         };
 
         virtual const uint8_t *getNumKeys() {
@@ -240,7 +244,8 @@ void HIDBoot<BOOT_PROTOCOL>::Initialize() {
         for(int i = 0; i < totalEndpoints(BOOT_PROTOCOL); i++) {
                 epInfo[i].epAddr = 0;
 		epInfo[i].maxPktSize	= (i) ? 0 : 8;
-		epInfo[i].epAttribs		= 0;
+		epInfo[i].bmSndToggle   = 0;
+		epInfo[i].bmRcvToggle   = 0;
 		epInfo[i].bmNakPower	= (i) ? USB_NAK_NOWAIT : USB_NAK_MAX_POWER;
 	}
 	bNumEP		= 1;
@@ -520,7 +525,7 @@ Fail:
 }
 
 template <const uint8_t BOOT_PROTOCOL>
-void HIDBoot<BOOT_PROTOCOL>::EndpointXtract(uint32_t conf, uint32_t iface, uint32_t alt, uint32_t proto, const USB_ENDPOINT_DESCRIPTOR *pep) {
+void HIDBoot<BOOT_PROTOCOL>::EndpointXtract(uint32_t conf, uint32_t iface, uint32_t /* alt */, uint32_t /* proto */, const USB_ENDPOINT_DESCRIPTOR *pep) {
 	// If the first configuration satisfies, the others are not considered.
         //if(bNumEP > 1 && conf != bConfNum)
         if(bNumEP == totalEndpoints(BOOT_PROTOCOL))
@@ -535,7 +540,8 @@ void HIDBoot<BOOT_PROTOCOL>::EndpointXtract(uint32_t conf, uint32_t iface, uint3
 		// Fill in the endpoint info structure
 		epInfo[bNumEP].epAddr		= (pep->bEndpointAddress & 0x0F);
 		epInfo[bNumEP].maxPktSize	= (uint8_t)pep->wMaxPacketSize;
-		epInfo[bNumEP].epAttribs		= 0;
+		epInfo[bNumEP].bmSndToggle = 0;
+		epInfo[bNumEP].bmRcvToggle = 0;
                 epInfo[bNumEP].bmNakPower = USB_NAK_NOWAIT;
 		bNumEP++;
 

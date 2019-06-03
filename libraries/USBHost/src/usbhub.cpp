@@ -28,12 +28,14 @@ qNextPollTime(0),
 bPollEnable(false) {
         epInfo[0].epAddr = 0;
         epInfo[0].maxPktSize = 8;
-        epInfo[0].epAttribs = 0;
+        epInfo[0].bmSndToggle = 0;
+        epInfo[0].bmRcvToggle = 0;
         epInfo[0].bmNakPower = USB_NAK_MAX_POWER;
 
         epInfo[1].epAddr = 1;
         epInfo[1].maxPktSize = 8; //kludge
-        epInfo[1].epAttribs = 0;
+        epInfo[1].bmSndToggle = 0;
+        epInfo[1].bmRcvToggle = 0;
         epInfo[1].bmNakPower = USB_NAK_NOWAIT;
 
         if(pUsb)
@@ -374,7 +376,7 @@ uint32_t USBHub::PortStatusChange(uint32_t port, HubEvent &evt) {
         return 0;
 }
 
-void PrintHubPortStatus(USBHub *hubptr, uint32_t addr, uint32_t port, uint32_t print_changes) {
+void PrintHubPortStatus(USBHub *hubptr, uint32_t /* addr */, uint32_t port, uint32_t print_changes) {
         uint8_t rcode = 0;
         HubEvent evt;
 

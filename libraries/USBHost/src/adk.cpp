@@ -45,7 +45,8 @@ ready(false) {
 	for (uint32_t i = 0; i < ADK_MAX_ENDPOINTS; i++) {
 		epInfo[i].epAddr	= 0;
 		epInfo[i].maxPktSize	= (i) ? 0 : 8;
-		epInfo[i].epAttribs		= 0;
+		epInfo[i].bmSndToggle   = 0;
+		epInfo[i].bmRcvToggle   = 0;
 		epInfo[i].bmNakPower  	= (i) ? USB_NAK_NOWAIT : USB_NAK_MAX_POWER;
         }//for(uint32_t i=0; i<ADK_MAX_ENDPOINTS; i++...
 
@@ -347,7 +348,7 @@ Fail:
 }
 
 /* Extracts bulk-IN and bulk-OUT endpoint information from config descriptor */
-void ADK::EndpointXtract(uint32_t conf, uint32_t iface, uint32_t alt, uint32_t proto, const USB_ENDPOINT_DESCRIPTOR *pep) {
+void ADK::EndpointXtract(uint32_t conf, uint32_t /* iface */, uint32_t /* alt */, uint32_t /* proto */, const USB_ENDPOINT_DESCRIPTOR *pep) {
         //ErrorMessage<uint8_t>(PSTR("Conf.Val"), conf);
         //ErrorMessage<uint8_t>(PSTR("Iface Num"), iface);
         //ErrorMessage<uint8_t>(PSTR("Alt.Set"), alt);
@@ -364,6 +365,8 @@ void ADK::EndpointXtract(uint32_t conf, uint32_t iface, uint32_t alt, uint32_t p
                 // Fill in the endpoint info structure
                 epInfo[index].epAddr = (pep->bEndpointAddress & 0x0F);
                 epInfo[index].maxPktSize = (uint8_t)pep->wMaxPacketSize;
+                epInfo[index].bmSndToggle = 0;
+                epInfo[index].bmRcvToggle = 0;
 
                 bNumEP++;
 

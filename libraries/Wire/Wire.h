@@ -26,14 +26,17 @@
 #include "SERCOM.h"
 #include "RingBuffer.h"
 
-#define BUFFER_LENGTH 32
+ // WIRE_HAS_END means Wire has end()
+#define WIRE_HAS_END 1
 
 class TwoWire : public Stream
 {
   public:
-    TwoWire(SERCOM *s);
+    TwoWire(SERCOM *s, uint8_t pinSDA, uint8_t pinSCL);
     void begin();
-    void begin(uint8_t);
+    void begin(uint8_t, bool enableGeneralCall = false);
+    void end();
+    void setClock(uint32_t);
 
     void beginTransmission(uint8_t);
     uint8_t endTransmission(bool stopBit);
@@ -52,52 +55,53 @@ class TwoWire : public Stream
     void onReceive(void(*)(int));
     void onRequest(void(*)(void));
 
+    inline size_t write(unsigned long n) { return write((uint8_t)n); }
+    inline size_t write(long n) { return write((uint8_t)n); }
+    inline size_t write(unsigned int n) { return write((uint8_t)n); }
+    inline size_t write(int n) { return write((uint8_t)n); }
     using Print::write;
 
     void onService(void);
 
   private:
     SERCOM * sercom;
+    uint8_t _uc_pinSDA;
+    uint8_t _uc_pinSCL;
+
     bool transmissionBegun;
 
     // RX Buffer
-    RingBuffer rxBuffer;
+    RingBufferN<256> rxBuffer;
 
     //TX buffer
-    RingBuffer txBuffer;
+    RingBufferN<256> txBuffer;
     uint8_t txAddress;
-
-
-    // Service buffer
-    //uint8_t srvBuffer[BUFFER_LENGTH];
-    //uint8_t srvBufferIndex;
-    //uint8_t srvBufferLength;
 
     // Callback user functions
     void (*onRequestCallback)(void);
     void (*onReceiveCallback)(int);
 
-    // TWI state
-    //enum TwoWireStatus
-    //{
-    //  UNINITIALIZED,
-    //  MASTER_IDLE,
-    //  MASTER_SEND,
-    //  MASTER_RECV,
-    //  SLAVE_IDLE,
-    //  SLAVE_RECV,
-    //  SLAVE_SEND
-    //};
-    //TwoWireStatus status;
-
     // TWI clock frequency
     static const uint32_t TWI_CLOCK = 100000;
-
-    // Timeouts
-    //static const uint32_t RECV_TIMEOUT = 100000;
-    //static const uint32_t XMIT_TIMEOUT = 100000;
 };
 
-extern TwoWire Wire;
+#if WIRE_INTERFACES_COUNT > 0
+  extern TwoWire Wire;
+#endif
+#if WIRE_INTERFACES_COUNT > 1
+  extern TwoWire Wire1;
+#endif
+#if WIRE_INTERFACES_COUNT > 2
+  extern TwoWire Wire2;
+#endif
+#if WIRE_INTERFACES_COUNT > 3
+  extern TwoWire Wire3;
+#endif
+#if WIRE_INTERFACES_COUNT > 4
+  extern TwoWire Wire4;
+#endif
+#if WIRE_INTERFACES_COUNT > 5
+  extern TwoWire Wire5;
+#endif
 
 #endif

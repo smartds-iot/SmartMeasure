@@ -217,13 +217,13 @@ byte getconfdescr( byte addr, byte conf )
   byte rcode;
   byte descr_length;
   byte descr_type;
-  unsigned int total_length;
+  uint16_t total_length;
   rcode = usb.getConfDescr( addr, 0, 4, conf, buf );  //get total length
   LOBYTE( total_length ) = buf[ 2 ];
   HIBYTE( total_length ) = buf[ 3 ];
-  if( total_length > 256 ) {    //check if total length is larger than buffer
+  if( total_length > sizeof(buf)) {    //check if total length is larger than buffer
     printProgStr(Conf_Trunc_str);
-    total_length = 256;
+    total_length = sizeof(buf);
   }
   rcode = usb.getConfDescr( addr, 0, total_length, conf, buf ); //get the whole descriptor
   while( buf_ptr < buf + total_length ) {  //parsing descriptors
@@ -340,6 +340,8 @@ void printHIDdescr( uint8_t* descr_ptr )
 /* function to print endpoint descriptor */
 void printepdescr( uint8_t* descr_ptr )
 {
+  uint8_t transfer_type;
+
  USB_ENDPOINT_DESCRIPTOR* ep_ptr = ( USB_ENDPOINT_DESCRIPTOR* )descr_ptr;
   printProgStr(End_Header_str);
   printProgStr(End_Address_str);
@@ -347,9 +349,10 @@ void printepdescr( uint8_t* descr_ptr )
   else printProgStr(PSTR("OUT\t\t"));
   print_hex( (ep_ptr->bEndpointAddress & 0xF), 8 );
   printProgStr(End_Attr_str);
-  if( 0x03 & ep_ptr->bmAttributes ) printProgStr(PSTR("INTERRUPT\t"));
-  else if( 0x02 & ep_ptr->bmAttributes ) printProgStr(PSTR("BULK\t"));
-  else if( 0x01 & ep_ptr->bmAttributes ) printProgStr(PSTR("ISO\t"));
+  transfer_type = ep_ptr->bmAttributes & bmUSB_TRANSFER_TYPE;
+  if( transfer_type == USB_TRANSFER_TYPE_INTERRUPT ) printProgStr(PSTR("INTERRUPT\t"));
+  else if( transfer_type == USB_TRANSFER_TYPE_BULK ) printProgStr(PSTR("BULK\t"));
+  else if( transfer_type == USB_TRANSFER_TYPE_ISOCHRONOUS ) printProgStr(PSTR("ISO\t"));
   print_hex( ep_ptr->bmAttributes, 8 );
   printProgStr(End_Pktsize_str);
   print_hex( ep_ptr->wMaxPacketSize, 16 );

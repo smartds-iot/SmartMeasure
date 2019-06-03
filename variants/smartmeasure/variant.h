@@ -84,11 +84,6 @@ extern "C"
 #define D0_CON1                 (4u)
 #define D1_CON1                 (5u)
 
-static const uint8_t SARA_ENABLE = PIN_SARA_ENABLE;
-static const uint8_t GSM_ENABLE = PIN_3V8_ENABLE;
-static const uint8_t SARA_TX_ENABLE = PIN_SARA_TX_ENABLE;
-static const uint8_t GPS_TIMEPULSE = PIN_GPS_TIMEPULSE;
-
 // CON2
 #define A0_CON2	                (6u)
 #define A1_CON2	                (7u)
@@ -96,11 +91,6 @@ static const uint8_t GPS_TIMEPULSE = PIN_GPS_TIMEPULSE;
 #define A3_CON2                 (9u)
 #define D0_CON2                 (10u)
 #define D1_CON1                 (11u)
-
-static const uint8_t SARA_ENABLE = PIN_SARA_ENABLE;
-static const uint8_t GSM_ENABLE = PIN_3V8_ENABLE;
-static const uint8_t SARA_TX_ENABLE = PIN_SARA_TX_ENABLE;
-static const uint8_t GPS_TIMEPULSE = PIN_GPS_TIMEPULSE;
 
 // CON3
 #define A0_CON3	                (12u)
@@ -110,10 +100,6 @@ static const uint8_t GPS_TIMEPULSE = PIN_GPS_TIMEPULSE;
 #define D0_CON3                 (16u)
 #define D1_CON3                 (17u)
 
-static const uint8_t SARA_ENABLE = PIN_SARA_ENABLE;
-static const uint8_t GSM_ENABLE = PIN_3V8_ENABLE;
-static const uint8_t SARA_TX_ENABLE = PIN_SARA_TX_ENABLE;
-static const uint8_t GPS_TIMEPULSE = PIN_GPS_TIMEPULSE;
 
 // PINES DIGITALES VARIOS
 #define INFO_BATERIA            (18u)
@@ -143,10 +129,10 @@ static const uint8_t SCL = PIN_WIRE_SCL;
 
 #define PIN_SERIAL1_RX       (25ul)
 #define PIN_SERIAL1_TX       (24ul)
-#define PAD_SERIAL1_TX       (UART_TX_PAD_0)
+#define PAD_SERIAL1_TX       (UART_TX_RTS_CTS_PAD_0_2_3)
 #define PAD_SERIAL1_RX       (SERCOM_RX_PAD_1)
-#define PIN_SERIAL3_RTS      (26ul)
-#define PIN_SERIAL3_CTS      (27ul)
+#define PIN_SERIAL1_RTS      (26ul)
+#define PIN_SERIAL1_CTS      (27ul)
 
 
 /*
@@ -165,10 +151,7 @@ static const uint8_t SCL = PIN_WIRE_SCL;
 #define PERIPH_SPI   sercom1
 #define PAD_SPI_TX   SPI_PAD_0_SCK_1
 #define PAD_SPI_RX   SERCOM_RX_PAD_3
-static const uint8_t SS   = PIN_SPI_SS;
-static const uint8_t MOSI = PIN_SPI_MOSI;
-static const uint8_t MISO = PIN_SPI_MISO;
-static const uint8_t SCK  = PIN_SPI_SCK;
+
 
 // Needed for SIGFOX module library
 #define SIGFOX_SPI       SPI

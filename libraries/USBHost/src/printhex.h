@@ -20,6 +20,8 @@ e-mail   :  support@circuitsathome.com
 #else
 #define __PRINTHEX_H__
 
+#include <Arduino.h>
+
 void E_Notifyc(char c, int lvl);
 
 template <class T>
@@ -66,18 +68,23 @@ void PrintHex2(Print *prn, T val) {
         prn->print((T)val, HEX);
 }
 
-template <class T> void D_PrintHex(T val, int lvl) {
 #ifdef DEBUG_USB_HOST
+template <class T> void D_PrintHex(T val, int lvl) {
         PrintHex<T > (val, lvl);
-#endif
 }
 
 template <class T>
 void D_PrintBin(T val, int lvl) {
-#ifdef DEBUG_USB_HOST
         PrintBin<T > (val, lvl);
-#endif
 }
+#else
+template <class T> void D_PrintHex(T, int) {
+}
+
+template <class T>
+void D_PrintBin(T, int) {
+}
+#endif
 
 
 

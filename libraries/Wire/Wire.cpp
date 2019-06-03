@@ -26,9 +26,11 @@ extern "C" {
 
 #include "Wire.h"
 
-TwoWire::TwoWire(SERCOM * s)
+TwoWire::TwoWire(SERCOM * s, uint8_t pinSDA, uint8_t pinSCL)
 {
   this->sercom = s;
+  this->_uc_pinSDA=pinSDA;
+  this->_uc_pinSCL=pinSCL;
   transmissionBegun = false;
 }
 
@@ -37,14 +39,27 @@ void TwoWire::begin(void) {
   sercom->initMasterWIRE(TWI_CLOCK);
   sercom->enableWIRE();
 
-  pinPeripheral(PIN_WIRE_SDA, g_APinDescription[PIN_WIRE_SDA].ulPinType);
-  pinPeripheral(PIN_WIRE_SCL, g_APinDescription[PIN_WIRE_SCL].ulPinType);
+  pinPeripheral(_uc_pinSDA, g_APinDescription[_uc_pinSDA].ulPinType);
+  pinPeripheral(_uc_pinSCL, g_APinDescription[_uc_pinSCL].ulPinType);
 }
 
-void TwoWire::begin(uint8_t address) {
+void TwoWire::begin(uint8_t address, bool enableGeneralCall) {
   //Slave mode
-  sercom->initSlaveWIRE(address);
+  sercom->initSlaveWIRE(address, enableGeneralCall);
   sercom->enableWIRE();
+
+  pinPeripheral(_uc_pinSDA, g_APinDescription[_uc_pinSDA].ulPinType);
+  pinPeripheral(_uc_pinSCL, g_APinDescription[_uc_pinSCL].ulPinType);
+}
+
+void TwoWire::setClock(uint32_t baudrate) {
+  sercom->disableWIRE();
+  sercom->initMasterWIRE(baudrate);
+  sercom->enableWIRE();
+}
+
+void TwoWire::end() {
+  sercom->disableWIRE();
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
@@ -56,27 +71,26 @@ uint8_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool stopBit)
 
   size_t byteRead = 0;
 
+  rxBuffer.clear();
+
   if(sercom->startTransmissionWIRE(address, WIRE_READ_FLAG))
   {
     // Read first data
     rxBuffer.store_char(sercom->readDataWIRE());
 
     // Connected to slave
-    //while(toRead--)
-    for(byteRead = 0; byteRead < quantity; ++byteRead)
+    for (byteRead = 1; byteRead < quantity; ++byteRead)
     {
-      if( byteRead == quantity - 1)  // Stop transmission
-      {
-        sercom->prepareNackBitWIRE(); // Prepare NACK to stop slave transmission
-        //sercom->readDataWIRE(); // Clear data register to send NACK
-        sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_STOP); // Send Stop
-      }
-      else // Continue transmission
-      {
-        sercom->prepareAckBitWIRE();  // Prepare Acknowledge
-        sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_READ); // Prepare the ACK command for the slave
-        rxBuffer.store_char( sercom->readDataWIRE() );  // Read data and send the ACK
-      }
+      sercom->prepareAckBitWIRE();                          // Prepare Acknowledge
+      sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_READ); // Prepare the ACK command for the slave
+      rxBuffer.store_char(sercom->readDataWIRE());          // Read data and send the ACK
+    }
+    sercom->prepareNackBitWIRE();                           // Prepare NACK to stop slave transmission
+    //sercom->readDataWIRE();                               // Clear data register to send NACK
+
+    if (stopBit)
+    {
+      sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_STOP);   // Send Stop
     }
   }
 
@@ -106,12 +120,6 @@ uint8_t TwoWire::endTransmission(bool stopBit)
 {
   transmissionBegun = false ;
 
-  // Check if there are data to send
-  if ( txBuffer.available() == 0)
-  {
-    return 4 ;
-  }
-
   // Start I2C transmission
   if ( !sercom->startTransmissionWIRE( txAddress, WIRE_WRITE_FLAG ) )
   {
@@ -128,12 +136,12 @@ uint8_t TwoWire::endTransmission(bool stopBit)
       sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_STOP);
       return 3 ;  // Nack or error
     }
-
-    if(txBuffer.available() == 0)
-    {
-      sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_STOP);
-    }
   }
+  
+  if (stopBit)
+  {
+    sercom->prepareCommandBitsWire(WIRE_MASTER_ACT_STOP);
+  }   
 
   return 0;
 }
@@ -145,27 +153,15 @@ uint8_t TwoWire::endTransmission()
 
 size_t TwoWire::write(uint8_t ucData)
 {
-  if(sercom->isMasterWIRE())
+  // No writing, without begun transmission or a full buffer
+  if ( !transmissionBegun || txBuffer.isFull() )
   {
-    // No writing, without begun transmission or a full buffer
-    if ( !transmissionBegun || txBuffer.isFull() )
-    {
-      return 0 ;
-    }
-
-    txBuffer.store_char( ucData ) ;
-
-    return 1 ;
-  }
-  else
-  {
-    if(sercom->sendDataSlaveWIRE( ucData ))
-    {
-      return 1;
-    }
+    return 0 ;
   }
 
-  return 0;
+  txBuffer.store_char( ucData ) ;
+
+  return 1 ;
 }
 
 size_t TwoWire::write(const uint8_t *data, size_t quantity)
@@ -217,29 +213,31 @@ void TwoWire::onService(void)
 {
   if ( sercom->isSlaveWIRE() )
   {
-    //Received data
-    if(sercom->isDataReadyWIRE())
+    if(sercom->isStopDetectedWIRE() || 
+        (sercom->isAddressMatch() && sercom->isRestartDetectedWIRE() && !sercom->isMasterReadOperationWIRE())) //Stop or Restart detected
     {
-      //Store data
-      rxBuffer.store_char(sercom->readDataWIRE());
+      sercom->prepareAckBitWIRE();
+      sercom->prepareCommandBitsWire(0x03);
 
-      //Stop or Restart detected
-      if(sercom->isStopDetectedWIRE() || sercom->isRestartDetectedWIRE())
+      //Calling onReceiveCallback, if exists
+      if(onReceiveCallback)
       {
-        //Calling onReceiveCallback, if exists
-        if(onReceiveCallback)
-        {
-          onReceiveCallback(available());
-        }
+        onReceiveCallback(available());
       }
+      
+      rxBuffer.clear();
     }
-
-    //Address Match
-    if(sercom->isAddressMatch())
+    else if(sercom->isAddressMatch())  //Address Match
     {
-      //Is a request ?
-      if(sercom->isMasterReadOperationWIRE())
+      sercom->prepareAckBitWIRE();
+      sercom->prepareCommandBitsWire(0x03);
+
+      if(sercom->isMasterReadOperationWIRE()) //Is a request ?
       {
+        txBuffer.clear();
+
+        transmissionBegun = true;
+
         //Calling onRequestCallback, if exists
         if(onRequestCallback)
         {
@@ -247,105 +245,87 @@ void TwoWire::onService(void)
         }
       }
     }
-  }
-}
+    else if(sercom->isDataReadyWIRE())
+    {
+      if (sercom->isMasterReadOperationWIRE())
+      {
+        uint8_t c = 0xff;
 
-/*
-void TwoWire::onService(void)
-{
-  // Retrieve interrupt status
-  uint32_t sr = TWI_GetStatus(twi);
+        if( txBuffer.available() ) {
+          c = txBuffer.read_char();
+        }
 
-  if (status == SLAVE_IDLE && TWI_STATUS_SVACC(sr)) {
-    TWI_DisableIt(twi, TWI_IDR_SVACC);
-    TWI_EnableIt(twi, TWI_IER_RXRDY | TWI_IER_GACC | TWI_IER_NACK
-        | TWI_IER_EOSACC | TWI_IER_SCL_WS | TWI_IER_TXCOMP);
+        transmissionBegun = sercom->sendDataSlaveWIRE(c);
+      } else { //Received data
+        if (rxBuffer.isFull()) {
+          sercom->prepareNackBitWIRE(); 
+        } else {
+          //Store data
+          rxBuffer.store_char(sercom->readDataWIRE());
 
-    srvBufferLength = 0;
-    srvBufferIndex = 0;
+          sercom->prepareAckBitWIRE(); 
+        }
 
-    // Detect if we should go into RECV or SEND status
-    // SVREAD==1 means *master* reading -> SLAVE_SEND
-    if (!TWI_STATUS_SVREAD(sr)) {
-      status = SLAVE_RECV;
-    } else {
-      status = SLAVE_SEND;
-
-      // Alert calling program to generate a response ASAP
-      if (onRequestCallback)
-        onRequestCallback();
-      else
-        // create a default 1-byte response
-        write((uint8_t) 0);
-    }
-  }
-
-  if (status != SLAVE_IDLE) {
-    if (TWI_STATUS_TXCOMP(sr) && TWI_STATUS_EOSACC(sr)) {
-      if (status == SLAVE_RECV && onReceiveCallback) {
-        // Copy data into rxBuffer
-        // (allows to receive another packet while the
-        // user program reads actual data)
-        for (uint8_t i = 0; i < srvBufferLength; ++i)
-          rxBuffer[i] = srvBuffer[i];
-        rxBufferIndex = 0;
-        rxBufferLength = srvBufferLength;
-
-        // Alert calling program
-        onReceiveCallback( rxBufferLength);
+        sercom->prepareCommandBitsWire(0x03);
       }
-
-      // Transfer completed
-      TWI_EnableIt(twi, TWI_SR_SVACC);
-      TWI_DisableIt(twi, TWI_IDR_RXRDY | TWI_IDR_GACC | TWI_IDR_NACK
-          | TWI_IDR_EOSACC | TWI_IDR_SCL_WS | TWI_IER_TXCOMP);
-      status = SLAVE_IDLE;
-    }
-  }
-
-  if (status == SLAVE_RECV) {
-    if (TWI_STATUS_RXRDY(sr)) {
-      if (srvBufferLength < BUFFER_LENGTH)
-        srvBuffer[srvBufferLength++] = TWI_ReadByte(twi);
-    }
-  }
-
-  if (status == SLAVE_SEND) {
-    if (TWI_STATUS_TXRDY(sr) && !TWI_STATUS_NACK(sr)) {
-      uint8_t c = 'x';
-      if (srvBufferIndex < srvBufferLength)
-        c = srvBuffer[srvBufferIndex++];
-      TWI_WriteByte(twi, c);
     }
   }
 }
-*/
 
 #if WIRE_INTERFACES_COUNT > 0
-/*static void Wire_Init(void) {
-  pmc_enable_periph_clk(WIRE_INTERFACE_ID);
-  PIO_Configure(
-      g_APinDescription[PIN_WIRE_SDA].pPort,
-      g_APinDescription[PIN_WIRE_SDA].ulPinType,
-      g_APinDescription[PIN_WIRE_SDA].ulPin,
-      g_APinDescription[PIN_WIRE_SDA].ulPinConfiguration);
-  PIO_Configure(
-      g_APinDescription[PIN_WIRE_SCL].pPort,
-      g_APinDescription[PIN_WIRE_SCL].ulPinType,
-      g_APinDescription[PIN_WIRE_SCL].ulPin,
-      g_APinDescription[PIN_WIRE_SCL].ulPinConfiguration);
+  /* In case new variant doesn't define these macros,
+   * we put here the ones for Arduino Zero.
+   *
+   * These values should be different on some variants!
+   */
+  #ifndef PERIPH_WIRE
+    #define PERIPH_WIRE          sercom3
+    #define WIRE_IT_HANDLER      SERCOM3_Handler
+  #endif // PERIPH_WIRE
+  TwoWire Wire(&PERIPH_WIRE, PIN_WIRE_SDA, PIN_WIRE_SCL);
 
-  NVIC_DisableIRQ(WIRE_ISR_ID);
-  NVIC_ClearPendingIRQ(WIRE_ISR_ID);
-  NVIC_SetPriority(WIRE_ISR_ID, 0);
-  NVIC_EnableIRQ(WIRE_ISR_ID);
-}*/
-
-
-TwoWire Wire(&sercom2);
-
-void SERCOM2_Handler(void) {
-  Wire.onService();
-}
-
+  void WIRE_IT_HANDLER(void) {
+    Wire.onService();
+  }
 #endif
+
+#if WIRE_INTERFACES_COUNT > 1
+  TwoWire Wire1(&PERIPH_WIRE1, PIN_WIRE1_SDA, PIN_WIRE1_SCL);
+
+  void WIRE1_IT_HANDLER(void) {
+    Wire1.onService();
+  }
+#endif
+
+#if WIRE_INTERFACES_COUNT > 2
+  TwoWire Wire2(&PERIPH_WIRE2, PIN_WIRE2_SDA, PIN_WIRE2_SCL);
+
+  void WIRE2_IT_HANDLER(void) {
+    Wire2.onService();
+  }
+#endif
+
+#if WIRE_INTERFACES_COUNT > 3
+  TwoWire Wire3(&PERIPH_WIRE3, PIN_WIRE3_SDA, PIN_WIRE3_SCL);
+
+  void WIRE3_IT_HANDLER(void) {
+    Wire3.onService();
+  }
+#endif
+
+#if WIRE_INTERFACES_COUNT > 4
+  TwoWire Wire4(&PERIPH_WIRE4, PIN_WIRE4_SDA, PIN_WIRE4_SCL);
+
+  void WIRE4_IT_HANDLER(void) {
+    Wire4.onService();
+  }
+#endif
+
+#if WIRE_INTERFACES_COUNT > 5
+  TwoWire Wire5(&PERIPH_WIRE5, PIN_WIRE5_SDA, PIN_WIRE5_SCL);
+
+  void WIRE5_IT_HANDLER(void) {
+    Wire5.onService();
+  }
+#endif
+
