@@ -1,0 +1,58 @@
+{
+  "packages":
+  [
+    {
+      "name": "smartmeasure",
+      "maintainer": "SmartDS",
+      "websiteURL": "http://www.smartds.es/",
+      "help":
+      {
+        "online": "http://www.smartds.es/"
+      },
+      "platforms":
+      [
+        {
+          "name": "SmartMeasure",
+          "architecture": "samd",
+          "version": "1.0.0",
+          "category": "Contributed",
+          "url": "file://C:/Users/Galco/Desktop/smartmeasure.zip",
+          "archiveFileName": "smartmeasure.zip",
+          "checksum": "SHA-256:564531da4144b75de1257267213f1da0c27f9804bfc491f871402ec107f60626",
+          "size": "323773",
+          "boards": [
+    {
+      "name": "SmartMeasure"
+    }        
+          ],
+          "toolsDependencies":
+          [
+            {
+              "packager": "arduino",
+              "name": "arm-none-eabi-gcc",
+              "version": "4.8.3-2014q1"
+            },
+            {
+              "packager": "arduino",
+              "name": "bossac",
+              "version": "1.6.1-arduino"
+            },
+            {
+              "packager": "arduino",
+              "name": "openocd",
+              "version": "0.9.0-arduino"
+            },
+            {
+              "packager": "arduino",
+              "name": "CMSIS",
+              "version": "4.0.0-atmel"
+            }
+          ]
+        }
+      ],
+      "tools":
+      [
+      ]
+    }
+  ]
+}
