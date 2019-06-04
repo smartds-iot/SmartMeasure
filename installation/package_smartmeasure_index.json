@@ -16,10 +16,10 @@
           "architecture": "samd",
           "version": "1.0.0",
           "category": "Contributed",
-          "url": "file://C:/Users/Galco/Desktop/smartmeasure.zip",
+          "url": "https://github.com/smartds-iot/SmartMeasure/blob/master/installation/smartmeasure.zip?raw=true",
           "archiveFileName": "smartmeasure.zip",
-          "checksum": "SHA-256:564531da4144b75de1257267213f1da0c27f9804bfc491f871402ec107f60626",
-          "size": "323773",
+          "checksum": "SHA-256:34637387bfa1ddc9cf7a33b977555638c65a205d6260ff6ecd778e0c82cf493b",
+          "size": "363512",
           "boards": [
     {
       "name": "SmartMeasure"
