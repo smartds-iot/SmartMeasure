@@ -18,8 +18,8 @@
           "category": "Contributed",
           "url": "https://github.com/smartds-iot/SmartMeasure/blob/master/installation/smartmeasure.zip?raw=true",
           "archiveFileName": "smartmeasure.zip",
-          "checksum": "SHA-256:34637387bfa1ddc9cf7a33b977555638c65a205d6260ff6ecd778e0c82cf493b",
-          "size": "363512",
+          "checksum": "SHA-256:6422ce55236ef46d07edbd3fead06736127a018defc67e5434f469d31c2b01a2",
+          "size": "359254",
           "boards": [
     {
       "name": "SmartMeasure"
