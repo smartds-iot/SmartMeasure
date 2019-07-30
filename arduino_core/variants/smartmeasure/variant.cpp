@@ -195,6 +195,10 @@ const PinDescription g_APinDescription[]=
     { PORTA,  0, PIO_DIGITAL,  (PIN_ATTR_NONE                                 ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, //XIN32 OK
     { PORTA,  1, PIO_DIGITAL,  (PIN_ATTR_NONE                                 ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, //XOUT32 OK
 
+    { PORTA,  20, PIO_DIGITAL,  (PIN_ATTR_NONE                                 ), No_ADC_Channel, PWM7_CH0, TC7_CH0, EXTERNAL_INT_4 }, //PULSADOR MODO
+
+
+
 } ;
 
 const void* g_apTCInstances[TCC_INST_NUM+TC_INST_NUM]={ TCC0, TCC1, TCC2, TC3, TC4, TC7 } ;

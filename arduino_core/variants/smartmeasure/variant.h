@@ -1,4 +1,4 @@
-/*
+ /*
   Copyright (c) 2014-2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -106,6 +106,8 @@ extern "C"
 #define FREE_FALL_PIN           (19u)
 #define BAT_LEVEL               (20u)
 #define ISET2_USB               (21u)
+#define SW_MODE                 (48u)
+#define I2C_EN                  (40u)
 
 /*
  * I2C

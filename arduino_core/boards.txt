@@ -35,10 +35,11 @@ smartmeasure.build.board=smartmeasure
 smartmeasure.build.core=arduino
 smartmeasure.build.extra_flags=-D__SAMD21J18A__ {build.usb_flags}
 smartmeasure.build.ldscript=linker_scripts/gcc/flash_with_bootloader.ld
-smartmeasure.build.openocdscript=openocd_scripts/smartmeasure.cfg
+smartmeasure.build.openocdscript=openocd_scripts/sodaq_sara.cfg
 smartmeasure.build.variant=smartmeasure
 smartmeasure.build.variant_system_lib=
 smartmeasure.build.vid=0x2341
 smartmeasure.build.pid=0x804d
 smartmeasure.bootloader.tool=openocd
 smartmeasure.bootloader.file=autonomo/samd21_sam_ba_autonomo.bin
+
